@@ -1,0 +1,10 @@
+{
+  "books": [
+    { "id": 1, "title": "1984", "author": "George Orwell" },
+    { "id": 2, "title": "Brave New World", "author": "Aldous Huxley" }
+  ],
+  "authors": [
+    { "id": 1, "name": "George Orwell" },
+    { "id": 2, "name": "Aldous Huxley" }
+  ]
+}
