@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Author, Book } from "../../types";
-import { getAuthors } from "../../api";
+import { Book } from "../../types";
 
 interface BookFormProps {
   bookToEdit?: Book | null;
@@ -15,19 +14,6 @@ export const BookForm: React.FC<BookFormProps> = ({
 }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
-  const [authors, setAuthors] = useState<Author[]>([]);
-
-  useEffect(() => {
-    const fetchAuthorsData = async () => {
-      try {
-        const authorsData = await getAuthors();
-        setAuthors(authorsData);
-      } catch (error) {
-        console.error("Error fetching authors:", error);
-      }
-    };
-    fetchAuthorsData();
-  }, []);
 
   useEffect(() => {
     if (bookToEdit) {
@@ -41,10 +27,16 @@ export const BookForm: React.FC<BookFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ title, author });
-    if (!bookToEdit) {
-      setTitle("");
+
+    if (!title || !author) {
+      return;
     }
+
+    onSubmit({ title, author });
+
+    setTitle("");
+    setAuthor("");
+    onClearForm();
   };
 
   return (
@@ -70,57 +62,34 @@ export const BookForm: React.FC<BookFormProps> = ({
       <div className="field">
         <label className="label">Author</label>
         <div className="control">
-          {bookToEdit ? (
-            <div className="select">
-              <select
-                value={author}
-                onChange={(e) => setAuthor(e.target.value)}
-                required
-              >
-                <option value="">Select an author</option>
-                {authors.map((author) => (
-                  <option key={author.id} value={author.name}>
-                    {author.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ) : (
-            <input
-              className="input"
-              type="text"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-              placeholder="Enter author name"
-              required
-            />
-          )}
+          <input
+            className="input"
+            type="text"
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+            placeholder="Enter author name"
+            required
+          />
         </div>
       </div>
 
       <div className="control">
-        {bookToEdit ? (
-          <button type="submit" className="button is-warning">
-            Update Book
-          </button>
-        ) : (
-          <button type="submit" className="button is-success">
-            Add Book
-          </button>
-        )}
-      </div>
-
-      {bookToEdit && (
-        <div className="control mt-3">
+        <button
+          type="submit"
+          className={`button ${bookToEdit ? "is-warning" : "is-success"}`}
+        >
+          {bookToEdit ? "Update Book" : "Add Book"}
+        </button>
+        {bookToEdit && (
           <button
             type="button"
-            className="button is-light"
+            className="button is-light ml-2"
             onClick={onClearForm}
           >
             Cancel Edit
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </form>
   );
 };
