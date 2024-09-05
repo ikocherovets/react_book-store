@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Author, Book } from "../../types";
 import { getAuthors } from "../../api";
 
@@ -13,9 +13,8 @@ export const BookForm: React.FC<BookFormProps> = ({
   onSubmit,
   onClearForm,
 }) => {
-  const titleRef = useRef<HTMLInputElement>(null);
-  const authorInputRef = useRef<HTMLInputElement>(null);
-  const authorSelectRef = useRef<HTMLSelectElement>(null);
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
   const [authors, setAuthors] = useState<Author[]>([]);
 
   useEffect(() => {
@@ -32,32 +31,20 @@ export const BookForm: React.FC<BookFormProps> = ({
 
   useEffect(() => {
     if (bookToEdit) {
-      if (titleRef.current) titleRef.current.value = bookToEdit.title;
-      if (authorInputRef.current)
-        authorInputRef.current.value = bookToEdit.author;
+      setTitle(bookToEdit.title);
+      setAuthor(bookToEdit.author);
     } else {
-      if (titleRef.current) titleRef.current.value = "";
-      if (authorInputRef.current) authorInputRef.current.value = "";
+      setTitle("");
+      setAuthor("");
     }
   }, [bookToEdit]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const title = titleRef.current?.value || "";
-    let author = "";
-
-    if (bookToEdit) {
-      author = authorSelectRef.current?.value || "";
-    } else {
-      author = authorInputRef.current?.value || "";
-    }
-
     onSubmit({ title, author });
-
     if (!bookToEdit) {
-      if (titleRef.current) titleRef.current.value = "";
-      if (authorInputRef.current) authorInputRef.current.value = "";
+      setTitle("");
+      setAuthor("");
     }
   };
 
@@ -73,7 +60,8 @@ export const BookForm: React.FC<BookFormProps> = ({
           <input
             className="input"
             type="text"
-            ref={titleRef}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter book title"
             required
           />
@@ -86,8 +74,8 @@ export const BookForm: React.FC<BookFormProps> = ({
           {bookToEdit ? (
             <div className="select">
               <select
-                ref={authorSelectRef}
-                defaultValue={bookToEdit.author}
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
                 required
               >
                 <option value="">Select an author</option>
@@ -102,7 +90,8 @@ export const BookForm: React.FC<BookFormProps> = ({
             <input
               className="input"
               type="text"
-              ref={authorInputRef}
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
               placeholder="Enter author name"
               required
             />
@@ -121,7 +110,7 @@ export const BookForm: React.FC<BookFormProps> = ({
           <button
             type="button"
             className="button is-light ml-2"
-            onClick={() => onClearForm()}
+            onClick={onClearForm}
           >
             Add New Book
           </button>
