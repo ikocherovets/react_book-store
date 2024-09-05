@@ -11,7 +11,8 @@ import { useFetchBooksAndAuthors } from "../../hooks/useFetchBooksAndAuthors";
 
 import { ErrorMessages } from "../../types/ErrorMessages";
 import { SortOrder } from "../../types/SortOrder";
-import { Loader } from "../Loader/Loader";
+import { Loader } from "../Loader";
+
 
 export const BookApp: React.FC = () => {
   const { books, setBooks, authors, loading, error } =
