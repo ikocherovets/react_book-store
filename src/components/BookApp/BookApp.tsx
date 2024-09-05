@@ -3,13 +3,18 @@ import { Book, Author } from "../../types";
 import { getBooks, createBook, removeBook, updateBook, getAuthors } from "../../api";
 import { BookForm } from "../BookForm";
 import { BookList } from "../BookList";
+
+import { sortBooks, filterBooksByAuthor } from "../../services/sortingService";
 import AuthorFilter from "../AuthorFilter/AuthorFilter";
+import { SortControl } from "../SortControl/SortControl";
 
 export const BookApp: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [bookToEdit, setBookToEdit] = useState<Book | null>(null);
-  const [authors, setAuthors] = useState<Author[]>([]); 
-  const [selectedAuthor, setSelectedAuthor] = useState(''); 
+  const [authors, setAuthors] = useState<Author[]>([]);
+  const [selectedAuthor, setSelectedAuthor] = useState('');
+  const [sortField, setSortField] = useState<keyof Book>('title');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     const fetchBookData = async () => {
@@ -70,26 +75,41 @@ export const BookApp: React.FC = () => {
     setBookToEdit(null);
   };
 
-  
-  const filteredBooks = selectedAuthor
-    ? books.filter((book) => book.author === selectedAuthor)
-    : books;
+  const filteredBooks = filterBooksByAuthor(books, selectedAuthor);
+  const sortedBooks = sortBooks(filteredBooks, sortField, sortOrder);
 
   return (
     <div className="container">
-       <AuthorFilter
-        authors={authors}
-        selectedAuthor={selectedAuthor}
-        onChange={(author) => setSelectedAuthor(author)}
-      />
+      <div className="box mb-6">
+        <BookForm
+          bookToEdit={bookToEdit}
+          onSubmit={bookToEdit ? handleEditBook : handleAddBook}
+          onClearForm={handleClearForm}
+        />
+      </div>
 
-      <BookForm
-        bookToEdit={bookToEdit}
-        onSubmit={bookToEdit ? handleEditBook : handleAddBook}
-        onClearForm={handleClearForm}
-      />
+      <div className="box mb-6">
+        <div className="columns">
+          <div className="column is-half">
+            <AuthorFilter
+              authors={authors}
+              selectedAuthor={selectedAuthor}
+              onChange={(author) => setSelectedAuthor(author)}
+            />
+          </div>
+          <div className="column is-half">
+            <SortControl
+              sortField={sortField}
+              sortOrder={sortOrder}
+              onSortFieldChange={(field) => setSortField(field)}
+              onSortOrderChange={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+            />
+          </div>
+        </div>
+      </div>
+
       <BookList
-        books={filteredBooks} 
+        books={sortedBooks} 
         onEdit={setBookToEdit}
         onDelete={handleDeleteBook}
       />
