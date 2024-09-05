@@ -44,7 +44,6 @@ export const BookForm: React.FC<BookFormProps> = ({
     onSubmit({ title, author });
     if (!bookToEdit) {
       setTitle("");
-      setAuthor("");
     }
   };
 
@@ -100,22 +99,28 @@ export const BookForm: React.FC<BookFormProps> = ({
       </div>
 
       <div className="control">
-        <button
-          type="submit"
-          className={`button ${bookToEdit ? "is-warning" : "is-success"}`}
-        >
-          {bookToEdit ? "Update Book" : "Add Book"}
-        </button>
-        {bookToEdit && (
-          <button
-            type="button"
-            className="button is-light ml-2"
-            onClick={onClearForm}
-          >
-            Add New Book
+        {bookToEdit ? (
+          <button type="submit" className="button is-warning">
+            Update Book
+          </button>
+        ) : (
+          <button type="submit" className="button is-success">
+            Add Book
           </button>
         )}
       </div>
+
+      {bookToEdit && (
+        <div className="control mt-3">
+          <button
+            type="button"
+            className="button is-light"
+            onClick={onClearForm}
+          >
+            Cancel Edit
+          </button>
+        </div>
+      )}
     </form>
   );
 };
