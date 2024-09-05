@@ -31,7 +31,7 @@ To get a local copy running, follow these steps:
 ### 1. Clone the repository:
 
 ```bash
-git clone https://github.com/ikocherovets/react-book-store.git
+git clone https://github.com/ikocherovets/react_book-store.git
 ```
 ### 2. Ensure you have Node.js installed (version 18 or later):
 
