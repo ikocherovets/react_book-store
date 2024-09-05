@@ -1,48 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { Book, Author } from "../../types";
-import { getBooks, createBook, removeBook, updateBook, getAuthors } from "../../api";
+import React from "react";
+import { Book } from "../../types";
+import { createBook, removeBook, updateBook } from "../../api";
 import { BookForm } from "../BookForm";
 import { BookList } from "../BookList";
 
 import { sortBooks, filterBooksByAuthor } from "../../services/sortingService";
 import AuthorFilter from "../AuthorFilter/AuthorFilter";
 import { SortControl } from "../SortControl/SortControl";
+import { useFetchBooksAndAuthors } from "../../hooks/useFetchBooksAndAuthors"; 
 
 export const BookApp: React.FC = () => {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [bookToEdit, setBookToEdit] = useState<Book | null>(null);
-  const [authors, setAuthors] = useState<Author[]>([]);
-  const [selectedAuthor, setSelectedAuthor] = useState('');
-  const [sortField, setSortField] = useState<keyof Book>('title');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-
-  useEffect(() => {
-    const fetchBookData = async () => {
-      try {
-        const booksData = await getBooks();
-        setBooks(booksData);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-      }
-    };
-
-    const fetchAuthorsData = async () => {
-      try {
-        const authorsData = await getAuthors();
-        setAuthors(authorsData);
-      } catch (error) {
-        console.error("Error fetching authors:", error);
-      }
-    };
-
-    fetchBookData();
-    fetchAuthorsData();
-  }, []);
+  const { books, setBooks, authors, loading, error } = useFetchBooksAndAuthors(); 
+  const [bookToEdit, setBookToEdit] = React.useState<Book | null>(null);
+  const [selectedAuthor, setSelectedAuthor] = React.useState('');
+  const [sortField, setSortField] = React.useState<keyof Book>('title');
+  const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>('asc');
 
   const handleAddBook = async (newBook: Omit<Book, "id">) => {
     try {
       const addedBook = await createBook(newBook);
-      setBooks([...books, addedBook]);
+      setBooks([...books, addedBook]);  
     } catch (error) {
       console.error("Error adding book", error);
     }
@@ -65,7 +42,7 @@ export const BookApp: React.FC = () => {
   const handleDeleteBook = async (id: number) => {
     try {
       await removeBook(id);
-      setBooks(books.filter((book) => book.id !== id));
+      setBooks(books.filter((book) => book.id !== id));  
     } catch (error) {
       console.error("Error deleting book", error);
     }
@@ -77,6 +54,9 @@ export const BookApp: React.FC = () => {
 
   const filteredBooks = filterBooksByAuthor(books, selectedAuthor);
   const sortedBooks = sortBooks(filteredBooks, sortField, sortOrder);
+
+  if (loading) return <div>Loading...</div>;  
+  if (error) return <div>{error}</div>;  
 
   return (
     <div className="container">
