@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Book } from "../../types";
-import { addBook, deleteBook, editBook, fetchBooks } from "../../api";
+import { getBooks, createBook, removeBook, updateBook } from "../../api";
 import { BookForm } from "../BookForm";
 import { BookList } from "../BookList";
 
@@ -11,7 +11,7 @@ export const BookApp: React.FC = () => {
   useEffect(() => {
     const fetchBookData = async () => {
       try {
-        const booksData = await fetchBooks();
+        const booksData = await getBooks();
         setBooks(booksData);
       } catch (error) {
         console.error("Error fetching books:", error);
@@ -23,7 +23,7 @@ export const BookApp: React.FC = () => {
 
   const handleAddBook = async (newBook: Omit<Book, "id">) => {
     try {
-      const addedBook = await addBook(newBook);
+      const addedBook = await createBook(newBook);
       setBooks([...books, addedBook]);
     } catch (error) {
       console.error("Error adding book", error);
@@ -33,7 +33,7 @@ export const BookApp: React.FC = () => {
   const handleEditBook = async (editedBook: Omit<Book, "id">) => {
     if (bookToEdit) {
       try {
-        const updatedBook = await editBook(bookToEdit.id, editedBook);
+        const updatedBook = await updateBook(bookToEdit.id, editedBook);
         setBooks(
           books.map((book) => (book.id === updatedBook.id ? updatedBook : book))
         );
@@ -46,7 +46,7 @@ export const BookApp: React.FC = () => {
 
   const handleDeleteBook = async (id: number) => {
     try {
-      await deleteBook(id);
+      await removeBook(id);
       setBooks(books.filter((book) => book.id !== id));
     } catch (error) {
       console.error("Error deleting book", error);
