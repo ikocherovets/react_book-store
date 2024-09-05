@@ -10,16 +10,17 @@ import { SortControl } from "../SortControl/SortControl";
 import { useFetchBooksAndAuthors } from "../../hooks/useFetchBooksAndAuthors"; 
 
 export const BookApp: React.FC = () => {
-  const { books, setBooks, authors, loading, error } = useFetchBooksAndAuthors(); 
+  const { books, setBooks, authors, loading, error } =
+    useFetchBooksAndAuthors(); 
   const [bookToEdit, setBookToEdit] = React.useState<Book | null>(null);
-  const [selectedAuthor, setSelectedAuthor] = React.useState('');
-  const [sortField, setSortField] = React.useState<keyof Book>('title');
-  const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>('asc');
+  const [selectedAuthor, setSelectedAuthor] = React.useState("");
+  const [sortField, setSortField] = React.useState<keyof Book>("title");
+  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("asc");
 
   const handleAddBook = async (newBook: Omit<Book, "id">) => {
     try {
       const addedBook = await createBook(newBook);
-      setBooks([...books, addedBook]);  
+      setBooks([...books, addedBook]); 
     } catch (error) {
       console.error("Error adding book", error);
     }
@@ -42,7 +43,7 @@ export const BookApp: React.FC = () => {
   const handleDeleteBook = async (id: number) => {
     try {
       await removeBook(id);
-      setBooks(books.filter((book) => book.id !== id));  
+      setBooks(books.filter((book) => book.id !== id)); 
     } catch (error) {
       console.error("Error deleting book", error);
     }
@@ -55,8 +56,17 @@ export const BookApp: React.FC = () => {
   const filteredBooks = filterBooksByAuthor(books, selectedAuthor);
   const sortedBooks = sortBooks(filteredBooks, sortField, sortOrder);
 
-  if (loading) return <div>Loading...</div>;  
-  if (error) return <div>{error}</div>;  
+  
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <button className="button is-loading is-large is-info"></button>
+        <p>Loading data, please wait...</p>
+      </div>
+    ); 
+  }
+
+  if (error) return <div>{error}</div>; 
 
   return (
     <div className="container">
@@ -82,14 +92,16 @@ export const BookApp: React.FC = () => {
               sortField={sortField}
               sortOrder={sortOrder}
               onSortFieldChange={(field) => setSortField(field)}
-              onSortOrderChange={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              onSortOrderChange={() =>
+                setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+              }
             />
           </div>
         </div>
       </div>
 
       <BookList
-        books={sortedBooks} 
+        books={sortedBooks}
         onEdit={setBookToEdit}
         onDelete={handleDeleteBook}
       />
