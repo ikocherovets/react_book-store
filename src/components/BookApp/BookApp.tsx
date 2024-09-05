@@ -9,20 +9,26 @@ import AuthorFilter from "../AuthorFilter/AuthorFilter";
 import { SortControl } from "../SortControl/SortControl";
 import { useFetchBooksAndAuthors } from "../../hooks/useFetchBooksAndAuthors";
 
+import { ErrorMessages } from "../../types/ErrorMessages";
+import { SortOrder } from "../../types/SortOrder";
+import { Loader } from "../Loader/Loader";
+
 export const BookApp: React.FC = () => {
   const { books, setBooks, authors, loading, error } =
     useFetchBooksAndAuthors();
   const [bookToEdit, setBookToEdit] = React.useState<Book | null>(null);
   const [selectedAuthor, setSelectedAuthor] = React.useState("");
   const [sortField, setSortField] = React.useState<keyof Book>("title");
-  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("asc");
+  const [sortOrder, setSortOrder] = React.useState<
+    SortOrder.ASC | SortOrder.DESC
+  >(SortOrder.ASC);
 
   const handleAddBook = async (newBook: Omit<Book, "id">) => {
     try {
       const addedBook = await createBook(newBook);
       setBooks([...books, addedBook]);
     } catch (error) {
-      console.error("Error adding book", error);
+      console.error(ErrorMessages.INVALID_INPUT);
     }
   };
 
@@ -31,11 +37,11 @@ export const BookApp: React.FC = () => {
       try {
         const updatedBook = await updateBook(bookToEdit.id, editedBook);
         setBooks(
-          books.map((book) => (book.id === updatedBook.id ? updatedBook : book))
+          books.map((book) => (book.id === bookToEdit.id ? updatedBook : book))
         );
         setBookToEdit(null);
       } catch (error) {
-        console.error("Error updating book", error);
+        console.error(ErrorMessages.NOT_FOUND);
       }
     }
   };
@@ -45,7 +51,7 @@ export const BookApp: React.FC = () => {
       await removeBook(id);
       setBooks(books.filter((book) => book.id !== id));
     } catch (error) {
-      console.error("Error deleting book", error);
+      console.error(ErrorMessages.SERVER_ERROR);
     }
   };
 
@@ -56,16 +62,9 @@ export const BookApp: React.FC = () => {
   const filteredBooks = filterBooksByAuthor(books, selectedAuthor);
   const sortedBooks = sortBooks(filteredBooks, sortField, sortOrder);
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <button className="button is-loading is-large is-info"></button>
-        <p>Loading data, please wait...</p>
-      </div>
-    );
-  }
+  if (loading) return <Loader />;
 
-  if (error) return <div>{error}</div>;
+  if (error) return <div>{ErrorMessages.NETWORK_ERROR}</div>;
 
   return (
     <div className="container">
@@ -92,7 +91,9 @@ export const BookApp: React.FC = () => {
               sortOrder={sortOrder}
               onSortFieldChange={(field) => setSortField(field)}
               onSortOrderChange={() =>
-                setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                setSortOrder(
+                  sortOrder === SortOrder.ASC ? SortOrder.DESC : SortOrder.ASC
+                )
               }
             />
           </div>

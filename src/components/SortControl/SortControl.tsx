@@ -1,14 +1,15 @@
 import React from "react";
 import { Book } from "../../types";
+import { SortOrder } from "../../types/SortOrder";
 
-interface SortControlProps {
+interface Props {
   sortField: keyof Book;
-  sortOrder: "asc" | "desc";
+  sortOrder: SortOrder.ASC | SortOrder.DESC;
   onSortFieldChange: (field: keyof Book) => void;
   onSortOrderChange: () => void;
 }
 
-export const SortControl: React.FC<SortControlProps> = ({
+export const SortControl: React.FC<Props> = ({
   sortField,
   sortOrder,
   onSortFieldChange,
@@ -30,10 +31,10 @@ export const SortControl: React.FC<SortControlProps> = ({
       </div>
       <div className="control mt-2">
         <button
-          className={`button ${sortOrder === "asc" ? "is-info" : "is-warning"}`}
+          className={`button ${sortOrder === SortOrder.ASC ? "is-info" : "is-warning"}`}
           onClick={onSortOrderChange}
         >
-          {sortOrder === "asc" ? "Ascending" : "Descending"}
+          {sortOrder === SortOrder.ASC ? "Ascending" : "Descending"}
         </button>
       </div>
     </div>
