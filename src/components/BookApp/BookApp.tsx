@@ -70,7 +70,7 @@ export const BookApp: React.FC = () => {
 
   return (
     <div className="container">
-      <div className="box mb-6">
+      <div className="mb-6">
         <BookForm
           bookToEdit={bookToEdit}
           onSubmit={bookToEdit ? handleEditBook : handleAddBook}
