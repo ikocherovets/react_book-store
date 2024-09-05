@@ -1,9 +1,9 @@
-import React from 'react';
-import { Book } from '../../types';
+import React from "react";
+import { Book } from "../../types";
 
 interface SortControlProps {
   sortField: keyof Book;
-  sortOrder: 'asc' | 'desc';
+  sortOrder: "asc" | "desc";
   onSortFieldChange: (field: keyof Book) => void;
   onSortOrderChange: () => void;
 }
@@ -30,10 +30,10 @@ export const SortControl: React.FC<SortControlProps> = ({
       </div>
       <div className="control mt-2">
         <button
-          className={`button ${sortOrder === 'asc' ? 'is-info' : 'is-warning'}`}
+          className={`button ${sortOrder === "asc" ? "is-info" : "is-warning"}`}
           onClick={onSortOrderChange}
         >
-          {sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+          {sortOrder === "asc" ? "Ascending" : "Descending"}
         </button>
       </div>
     </div>

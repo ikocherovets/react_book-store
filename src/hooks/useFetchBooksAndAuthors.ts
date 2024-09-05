@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Book, Author } from '../types';
-import { getBooks, getAuthors } from '../api';
+import { useState, useEffect } from "react";
+import { Book, Author } from "../types";
+import { getBooks, getAuthors } from "../api";
 
 export const useFetchBooksAndAuthors = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -11,12 +11,15 @@ export const useFetchBooksAndAuthors = () => {
   useEffect(() => {
     const fetchBooksAndAuthors = async () => {
       try {
-        const [booksData, authorsData] = await Promise.all([getBooks(), getAuthors()]);
+        const [booksData, authorsData] = await Promise.all([
+          getBooks(),
+          getAuthors(),
+        ]);
         setBooks(booksData);
         setAuthors(authorsData);
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError('Error fetching data');
+        console.error("Error fetching data:", err);
+        setError("Error fetching data");
       } finally {
         setLoading(false);
       }
