@@ -3,6 +3,7 @@ import { Book, Author } from "../../types";
 import { getBooks, createBook, removeBook, updateBook, getAuthors } from "../../api";
 import { BookForm } from "../BookForm";
 import { BookList } from "../BookList";
+import AuthorFilter from "../AuthorFilter/AuthorFilter";
 
 export const BookApp: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -76,24 +77,11 @@ export const BookApp: React.FC = () => {
 
   return (
     <div className="container">
-      <div className="field">
-        <label className="label">Filter by Author</label>
-        <div className="control">
-          <div className="select is-fullwidth">
-            <select
-              value={selectedAuthor}
-              onChange={(e) => setSelectedAuthor(e.target.value)}
-            >
-              <option value="">All Authors</option>
-              {authors.map((author) => (
-                <option key={author.id} value={author.name}>
-                  {author.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
+       <AuthorFilter
+        authors={authors}
+        selectedAuthor={selectedAuthor}
+        onChange={(author) => setSelectedAuthor(author)}
+      />
 
       <BookForm
         bookToEdit={bookToEdit}
